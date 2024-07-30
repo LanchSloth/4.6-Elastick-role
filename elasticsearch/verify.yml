@@ -1,0 +1,37 @@
+---
+# This is an example playbook to execute Ansible tests.
+
+- name: Verify
+  hosts: all
+  gather_facts: false
+  roles:
+   - role: tests/test_port
+     vars:
+       port: "9200"
+   - role: tests/test_elasticsearch_data_link
+     vars:
+       port: "9200"  
+   - role: tests/test_elasticsearch_cat_indicies
+     vars:
+       port: "9200"         
+  vars:
+    version: "7.12.0"          
+  tasks:
+
+  - name: check elasticsearch port result 
+    assert:
+        that:
+           - "{{ output_port.failed }} == false"    
+  
+  - name: check elasticsearch data link work result 
+    assert:
+        that:
+           - "'{{ version }}' in  output_elasticsearch_data_link.stdout"
+
+  - name: check elasticsearch indicies access work result 
+    assert:
+        that:
+           - "'health' in  output_elasticsearch_cat_indicies.stdout"
+
+
+
