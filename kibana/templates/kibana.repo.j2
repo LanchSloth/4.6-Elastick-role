@@ -1,0 +1,8 @@
+[kibana-{{ kb_repo_name }}]
+name=Kibana repository for {{ kibana_version }} packages
+baseurl={{ kb_repo_base }}/packages/{{ kb_repo_name }}/yum
+gpgcheck=1
+gpgkey={{ kb_repo_base }}/GPG-KEY-elasticsearch
+enabled=1
+autorefresh=1
+type=rpm-md

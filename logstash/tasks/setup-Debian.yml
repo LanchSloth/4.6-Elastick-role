@@ -1,0 +1,42 @@
+---
+- name: Ensure required dependencies are installed.
+  apt:
+    update_cache: yes
+    name:
+      - apt-transport-https
+      - gnupg2
+    state: present
+
+- name: Add Elasticsearch apt key.
+  apt_key:
+    url: "{{ ls_repo_base }}/GPG-KEY-elasticsearch"
+    state: present
+
+- name: Add Logstash repository.
+  apt_repository:
+    repo: 'deb {{ ls_repo_base }}/packages/{{ ls_repo_name }}/apt stable main'
+    state: present
+    update_cache: true
+
+- name: Install Logstash.
+  apt:
+    name: '{{ logstash_package }}{% if logstash_version is defined and logstash_version != ""  %}{% endif %}'
+    state: present
+
+- name: Add Logstash user to adm group (Debian).
+  user:
+    name: logstash
+    group: logstash
+    groups: adm
+  notify: restart logstash
+  when: molecule_yml is not defined
+
+- name: Add Logstash user to adm group (Debian). MOLECULE
+  user:
+    name: logstash
+    group: logstash
+    groups: adm
+  notify: restart logstash MOLECULE
+  when: molecule_yml is defined
+
+
